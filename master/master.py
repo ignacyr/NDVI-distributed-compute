@@ -8,7 +8,7 @@ import sys
 import aiohttp
 
 path = 'D:\\\\SatelliteImagesBIGDATA\\'
-containers = 4  # int(sys.argv[1])
+containers = 1  # int(sys.argv[1])
 ram_limit = 1.5
 
 images = []
@@ -71,7 +71,7 @@ end = time()
 total_time = end - start
 print(f"Total processing time: {total_time}")
 
-with open("measurements.txt", "a") as f:
+with open("measurements.csv", "a") as f:
     f.write(f"{containers},{ram_limit},{total_time}\n")
 
 # ERROR 125
