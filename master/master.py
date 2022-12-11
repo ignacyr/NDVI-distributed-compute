@@ -4,11 +4,12 @@ import random
 import asyncio
 from time import time, sleep
 import sys
+from statistics import mean
 
 import aiohttp
 
 path = 'D:\\\\SatelliteImagesBIGDATA\\'
-containers = 1  # int(sys.argv[1])
+containers = int(sys.argv[1])
 ram_limit = 1.5
 
 images = []
@@ -29,22 +30,17 @@ for d in os.listdir(path):
 random.shuffle(images)
 chunks = [images[i::containers] for i in range(containers)]
 
-for i in range(containers):
-    command = f"docker run --rm -d -p 5{i:03d}:5000 " \
-              f"--mount type=bind,source=D:\\SatelliteImagesBIGDATA,target=/SatelliteImagesBIGDATA " \
-              f"--cpus=1 " \
-              f"--memory={ram_limit}g " \
-              f"ndvi-compute-executor"
-    print(command)
-    output = os.system(command)
-
-sleep(5)
-
-# for i, chunk in enumerate(chunks):
-#     print(f"Requesting http://127.0.0.1:5{i:03d}")
-#     response = requests.post(url=f"http://127.0.0.1:5{i:03d}", json=json.dumps({"data": chunk}))
-#     print(f"Container {i}: {response}")
-#     print(response.text)
+# for i in range(containers):
+#     command = f"docker run --rm -d -p 5{i:03d}:5000 " \
+#               f"--mount type=bind,source=D:\\SatelliteImagesBIGDATA,target=/SatelliteImagesBIGDATA " \
+#               f"--cpus=1 " \
+#               f"--memory={ram_limit}g " \
+#               f"ndvi-compute-executor"
+#     print(command)
+#     output = os.system(command)
+#
+# # Wait for containers initialization
+# sleep(5)
 
 
 async def get_ndvi(session, i, chunk):
@@ -65,14 +61,27 @@ print(f"Number of containers: {len(chunks)}")
 print("Starting app...")
 start = time()
 ndvi_results = asyncio.run(main())
-for r in ndvi_results:
-    print(r)
 end = time()
 total_time = end - start
+
+total_image_proc_time = []
+ndvi_calc_time = []
+read_time = []
+write_time = []
+for r in ndvi_results:
+    r = json.loads(r)
+    for im in r["data"]:
+        total_image_proc_time.append(im["total_image_proc_time"])
+        ndvi_calc_time.append(im["ndvi_calc_time"])
+        read_time.append(im["read_time"])
+        write_time.append(im["write_time"])
+
+
 print(f"Total processing time: {total_time}")
 
 with open("measurements.csv", "a") as f:
-    f.write(f"{containers},{ram_limit},{total_time}\n")
+    f.write(f"{containers},{ram_limit},{total_time},{mean(total_image_proc_time)},"
+            f"{mean(ndvi_calc_time)},{mean(read_time)},{mean(write_time)}\n")
 
 # ERROR 125
 # os.system("docker stop $(docker ps -aq)")
