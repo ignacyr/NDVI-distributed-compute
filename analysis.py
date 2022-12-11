@@ -9,18 +9,20 @@ df["acceleration"] = df["total_time"][0] / df["total_time"]
 
 print(df.to_string())
 
-df.plot(x="containers", y="acceleration")
+df.plot.scatter(x="containers", y="acceleration")
 plt.show()
 
-df.plot(x="containers", y="total_image_proc_time")
+df.plot.scatter(x="containers", y="total_image_proc_time")
 plt.show()
 
-df.plot(x="containers", y="ndvi_calc_time")
+df.plot.scatter(x="containers", y="ndvi_calc_time")
 plt.show()
 
-df.plot(x="containers", y="read_time")
+df.plot.scatter(x="containers", y="read_time")
 plt.show()
 
-df.plot(x="containers", y="write_time")
+df.plot.scatter(x="containers", y="write_time")
 plt.show()
+
+
 

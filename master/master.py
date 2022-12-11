@@ -30,17 +30,17 @@ for d in os.listdir(path):
 random.shuffle(images)
 chunks = [images[i::containers] for i in range(containers)]
 
-# for i in range(containers):
-#     command = f"docker run --rm -d -p 5{i:03d}:5000 " \
-#               f"--mount type=bind,source=D:\\SatelliteImagesBIGDATA,target=/SatelliteImagesBIGDATA " \
-#               f"--cpus=1 " \
-#               f"--memory={ram_limit}g " \
-#               f"ndvi-compute-executor"
-#     print(command)
-#     output = os.system(command)
-#
-# # Wait for containers initialization
-# sleep(5)
+for i in range(containers):
+    command = f"docker run --rm -d -p 5{i:03d}:5000 " \
+              f"--mount type=bind,source=D:\\SatelliteImagesBIGDATA,target=/SatelliteImagesBIGDATA " \
+              f"--cpus=1 " \
+              f"--memory={ram_limit}g " \
+              f"ndvi-compute-executor"
+    print(command)
+    output = os.system(command)
+
+# Wait for containers initialization
+sleep(5)
 
 
 async def get_ndvi(session, i, chunk):
