@@ -75,6 +75,7 @@ for r in ndvi_results:
         ndvi_calc_time.append(im["ndvi_calc_time"])
         read_time.append(im["read_time"])
         write_time.append(im["write_time"])
+        # print(im["avg_ndvi"], im["total_ndvi"])
 
 
 print(f"Total processing time: {total_time}")

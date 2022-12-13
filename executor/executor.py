@@ -36,11 +36,23 @@ def calculate_ndvi():
         # Calculate NDVI
         start_ndvi = time()
         ndvi = (band_nir.astype(float) - band_red.astype(float)) / (band_nir + band_red)
-        summ = 0.0
+
+        # ndvi[ndvi == float('inf') or ndvi == float('+inf') or ndvi == float('-inf')] = 0.0
+        # if np.nansum(ndvi) is not None:
+        #     total_ndvi = np.nansum(ndvi)
+        # else:
+        #     total_ndvi = 0.0
+        # if np.nanmean(ndvi) is not None:
+        #     avg_ndvi = np.nanmean(ndvi)
+        # else:
+        #     avg_ndvi = 0.0
+
+        total_ndvi = 0.0
         for row in ndvi:
             for el in row:
                 if el > 0.0 and el != float('inf'):
-                    summ += el
+                    total_ndvi += el
+
         end_ndvi = time()
         ndvi_calc_time = end_ndvi - start_ndvi
 
@@ -56,8 +68,9 @@ def calculate_ndvi():
         end = time()
         total_image_proc_time = end - start
 
-        response["data"].append({"total_image_proc_time": total_image_proc_time, "total_ndvi": summ, "image": path_red[46:50],
+        response["data"].append({"total_image_proc_time": total_image_proc_time, "total_ndvi": total_ndvi, "image": path_red[46:50],
                                  "ndvi_calc_time": ndvi_calc_time, "read_time": read_time, "write_time": write_time})
+                                 # "avg_ndvi": avg_ndvi})
     return json.dumps(response)
 
 
