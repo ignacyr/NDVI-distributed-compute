@@ -10,7 +10,7 @@ import psutil
 
 import aiohttp
 
-path = 'C:\\\\SatelliteImagesBIGDATA\\'
+path = 'D:\\\\SatelliteImagesBIGDATA\\'
 containers = int(sys.argv[1])
 test = int(sys.argv[2])
 ram_limit = 1.5
@@ -79,16 +79,15 @@ for r in ndvi_results:
         ndvi_calc_time.append(im["ndvi_calc_time"])
         read_time.append(im["read_time"])
         write_time.append(im["write_time"])
-        # print(im["avg_ndvi"], im["total_ndvi"])
 
 
 print(f"Total processing time: {total_time}")
 
 system = platform.system()
-ram = str(round(psutil.virtual_memory().total / (1024.0 **3)))
+ram = str(round(psutil.virtual_memory().total / (1024.0 ** 3)))
 cpus = psutil.cpu_count()
 
-with open("measurements2.csv", "a") as f:
+with open("measurements.csv", "a") as f:
     f.write(f"{containers},{ram_limit},{total_time},{mean(total_image_proc_time)},"
             f"{mean(ndvi_calc_time)},{mean(read_time)},{mean(write_time)},{system},{ram},{cpus}\n")
 
