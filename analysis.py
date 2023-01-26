@@ -1,7 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-df = pd.read_csv("measurements.csv")[20:]
+
+df = pd.read_csv("measurements.csv")
 df = df.loc[df["ram_limit"] == 1.5]
 df = df.groupby("containers", as_index=False).mean()
 df = df.sort_values(by="containers")

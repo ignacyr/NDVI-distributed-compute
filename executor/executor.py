@@ -68,9 +68,10 @@ def calculate_ndvi():
         end = time()
         total_image_proc_time = end - start
 
-        response["data"].append({"total_image_proc_time": total_image_proc_time, "total_ndvi": total_ndvi, "image": path_red[46:50],
+        response["data"].append({"total_image_proc_time": total_image_proc_time, "image": path_red[46:50], # "total_ndvi": total_ndvi,
                                  "ndvi_calc_time": ndvi_calc_time, "read_time": read_time, "write_time": write_time})
                                  # "avg_ndvi": avg_ndvi})
+    print(response)
     return json.dumps(response)
 
 

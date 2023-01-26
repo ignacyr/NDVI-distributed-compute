@@ -5,11 +5,14 @@ import asyncio
 from time import time, sleep
 import sys
 from statistics import mean
+import platform
+import psutil
 
 import aiohttp
 
-path = 'D:\\\\SatelliteImagesBIGDATA\\'
+path = 'C:\\\\SatelliteImagesBIGDATA\\'
 containers = int(sys.argv[1])
+test = int(sys.argv[2])
 ram_limit = 1.5
 
 images = []
@@ -30,17 +33,18 @@ for d in os.listdir(path):
 random.shuffle(images)
 chunks = [images[i::containers] for i in range(containers)]
 
-for i in range(containers):
-    command = f"docker run --rm -d -p 5{i:03d}:5000 " \
-              f"--mount type=bind,source=D:\\SatelliteImagesBIGDATA,target=/SatelliteImagesBIGDATA " \
-              f"--cpus=1 " \
-              f"--memory={ram_limit}g " \
-              f"ndvi-compute-executor"
-    print(command)
-    output = os.system(command)
+if test == 0:
+    for i in range(containers):
+        command = f"docker run --rm -d -p 5{i:03d}:5000 " \
+                  f"--mount type=bind,source=C:\\SatelliteImagesBIGDATA,target=/SatelliteImagesBIGDATA " \
+                  f"--cpus=1 " \
+                  f"--memory={ram_limit}g " \
+                  f"ndvi-compute-executor"
+        print(command)
+        output = os.system(command)
 
-# Wait for containers initialization
-sleep(5)
+    # Wait for containers initialization
+    sleep(5)
 
 
 async def get_ndvi(session, i, chunk):
@@ -80,15 +84,17 @@ for r in ndvi_results:
 
 print(f"Total processing time: {total_time}")
 
-with open("measurements.csv", "a") as f:
+system = platform.system()
+ram = str(round(psutil.virtual_memory().total / (1024.0 **3)))
+cpus = psutil.cpu_count()
+
+with open("measurements2.csv", "a") as f:
     f.write(f"{containers},{ram_limit},{total_time},{mean(total_image_proc_time)},"
-            f"{mean(ndvi_calc_time)},{mean(read_time)},{mean(write_time)}\n")
+            f"{mean(ndvi_calc_time)},{mean(read_time)},{mean(write_time)},{system},{ram},{cpus}\n")
 
 # ERROR 125
 # os.system("docker stop $(docker ps -aq)")
 # os.system("docker rm $(docker ps -aq)")
-
-
 
 
 
